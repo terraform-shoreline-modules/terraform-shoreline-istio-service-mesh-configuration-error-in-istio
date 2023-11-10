@@ -1,0 +1,170 @@
+{
+  "name": "service_mesh_configuration_error_in_istio",
+  "description": "The incident type of \"Service Mesh Configuration Error in Istio\" refers to a situation where the configuration of the Istio service mesh is incorrect or invalid. This can lead to issues with the routing of traffic within the service mesh, resulting in service disruptions or errors. Service mesh configuration errors can be caused by a variety of factors, such as misconfigured policies or faulty service discovery mechanisms, and can be difficult to diagnose and resolve without careful analysis of the service mesh configuration.",
+  "params": [
+    {
+      "name": "COMPONENT_NAME",
+      "value": ""
+    },
+    {
+      "name": "YOUR_DEPLOYMENT",
+      "value": ""
+    },
+    {
+      "name": "POD_NAME",
+      "value": ""
+    },
+    {
+      "name": "LOG_FILE_PATH",
+      "value": ""
+    },
+    {
+      "name": "YOUR_CONFIG_FILE",
+      "value": ""
+    },
+    {
+      "name": "NAMESPACE",
+      "value": ""
+    },
+    {
+      "name": "CONTAINER_NAME",
+      "value": ""
+    },
+    {
+      "name": "K8S_CLUSTER_NAME",
+      "value": ""
+    },
+    {
+      "name": "HOST_NAME",
+      "value": ""
+    }
+  ],
+  "cells": [
+    {
+      "name": "cell_1",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Service Mesh Configuration Error in Istio.\nThe incident type of \"Service Mesh Configuration Error in Istio\" refers to a situation where the configuration of the Istio service mesh is incorrect or invalid. This can lead to issues with the routing of traffic within the service mesh, resulting in service disruptions or errors. Service mesh configuration errors can be caused by a variety of factors, such as misconfigured policies or faulty service discovery mechanisms, and can be difficult to diagnose and resolve without careful analysis of the service mesh configuration."
+    },
+    {
+      "name": "cell_2",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the status of the Istio pods"
+    },
+    {
+      "name": "cell_3",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | limit=1 | random=1 | `kubectl get pods -n ${NAMESPACE}`"
+    },
+    {
+      "name": "cell_4",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the logs of the Istio sidecar container in a specific pod"
+    },
+    {
+      "name": "cell_5",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | limit=1 | random=1 | `kubectl logs ${POD_NAME} -c istio-proxy -n ${NAMESPACE}`"
+    },
+    {
+      "name": "cell_6",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Validate the configuration of the Istio service mesh"
+    },
+    {
+      "name": "cell_7",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `istioctl analyze`"
+    },
+    {
+      "name": "cell_8",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the configuration of a specific Istio component"
+    },
+    {
+      "name": "cell_9",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `istioctl get ${COMPONENT_NAME} -n ${NAMESPACE}`"
+    },
+    {
+      "name": "cell_10",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Restart the Istio pods to apply configuration changes"
+    },
+    {
+      "name": "cell_11",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | limit=1 | random=1 | `kubectl rollout restart deployment -n ${NAMESPACE}`"
+    },
+    {
+      "name": "cell_12",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the status of the Istio components and their dependencies"
+    },
+    {
+      "name": "cell_13",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `istioctl proxy-status`"
+    },
+    {
+      "name": "cell_14",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the Istio configuration for a specific workload"
+    },
+    {
+      "name": "cell_15",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `istioctl analyze ${POD_NAME} -n ${NAMESPACE}`"
+    },
+    {
+      "name": "cell_16",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the Kubernetes events related to Istio"
+    },
+    {
+      "name": "cell_17",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | limit=1 | random=1 | `kubectl get events -n ${NAMESPACE}`"
+    },
+    {
+      "name": "cell_18",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Identify the source of the configuration error by reviewing the Istio configuration files and logs."
+    },
+    {
+      "name": "cell_19",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | random=1 | limit=1 | invoke_get_container_logs($POD_NAME, $LOG_FILE_PATH, $NAMESPACE, $CONTAINER_NAME)"
+    },
+    {
+      "name": "cell_20",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Correct the configuration error by modifying the Istio configuration files as necessary."
+    },
+    {
+      "name": "cell_21",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | random=1 | limit=1 | invoke_istio_config_update($YOUR_DEPLOYMENT, $YOUR_CONFIG_FILE, $NAMESPACE)"
+    }
+  ]
+}
